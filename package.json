@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "jest",
-    "test:watch": "npm run test -- --watch"
+    "test:watch": "npm run test -- --watch",
+    "format:fix": "pretty-quick"
   },
   "keywords": [],
   "author": "",
@@ -13,6 +14,8 @@
   "devDependencies": {
     "@types/jest": "^24.0.18",
     "jest": "^24.9.0",
+    "prettier": "^1.18.2",
+    "pretty-quick": "^1.11.1",
     "ts-jest": "^24.1.0",
     "typescript": "^3.6.3"
   }
