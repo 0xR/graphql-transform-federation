@@ -16,8 +16,8 @@ Run the tests
 ## Functionality
 - [x] add `@key(fields: "...")` directives to types
 - [x] expose `{ _server { sdl } }`
-- [ ] convert types to `extend` types
+- [x] convert types to `extend` types
 - [ ] resolving `{ _entities(representations: ...) }` queries
-- [ ] adding `@external` directives
+- [x] adding `@external` directives
 - [ ] adding `@requires` directives
 - [ ] adding `@provides` directives
