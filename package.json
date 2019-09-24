@@ -7,22 +7,33 @@
     "test": "jest",
     "test:watch": "npm run test -- --watch",
     "format": "prettier --check '**/*.{js,ts,json,md}'",
-    "format:fix": "prettier --write '**/*.{js,ts,json,md}'"
+    "format:fix": "prettier --write '**/*.{js,ts,json,md}'",
+    "example:watch": "nodemon --signal SIGINT -e ts,js -w example -x npm run example",
+    "example": "concurrently 'npm run example:gateway' 'npm run example:transformed-server' 'npm run example:extension-server'",
+    "example:gateway": "wait-on tcp:4001 && wait-on tcp:4002 && ts-node example/gateway",
+    "example:transformed-server": "ts-node example/transformed-server",
+    "example:extension-server": "ts-node example/extension-server"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@apollo/federation": "^0.9.4",
+    "@apollo/gateway": "^0.10.4",
     "@types/dedent": "^0.7.0",
     "@types/graphql": "^14.5.0",
     "@types/jest": "^24.0.18",
     "@types/node": "^12.7.5",
+    "apollo-server": "^2.9.3",
     "dedent": "^0.7.0",
     "graphql": "^14.5.7",
     "graphql-tools": "^4.0.5",
     "jest": "^24.9.0",
+    "nodemon": "^1.19.2",
     "prettier": "^1.18.2",
     "ts-jest": "^24.1.0",
-    "typescript": "^3.6.3"
+    "ts-node": "^8.4.1",
+    "typescript": "^3.6.3",
+    "wait-on": "^3.3.0"
   }
 }
