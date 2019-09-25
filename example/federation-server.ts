@@ -4,11 +4,14 @@ const { ApolloServer, gql } = require('apollo-server');
 const { buildFederatedSchema } = require('@apollo/federation');
 
 const typeDefs = gql`
-  extend type Product @key(fields: "id") {
-    id: String! @external
-    name: String
+  type Product @key(fields: "id") {
+    id: String!
     price: Int
     weight: Int
+  }
+
+  type Query {
+    findProduct: Product!
   }
 `;
 
@@ -16,10 +19,16 @@ interface ProductKey {
   id: String;
 }
 
+const product = {
+  id: '123',
+  price: 899,
+  weight: 100,
+};
+
 const resolvers = {
-  Product: {
-    __resolveReference(object: ProductKey) {
-      return products.find(product => product.id === object.id);
+  Query: {
+    findProduct() {
+      return product;
     },
   },
 };
@@ -34,14 +43,5 @@ const server = new ApolloServer({
 });
 
 server.listen({ port: 4002 }).then(({ url }: ServerInfo) => {
-  console.log(`🚀 Extension server ready at ${url}`);
+  console.log(`🚀 Federation server ready at ${url}`);
 });
-
-const products = [
-  {
-    id: '123',
-    name: 'Product from extension server!',
-    price: 899,
-    weight: 100,
-  },
-];

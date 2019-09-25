@@ -9,10 +9,10 @@
     "format": "prettier --check '**/*.{js,ts,json,md}'",
     "format:fix": "prettier --write '**/*.{js,ts,json,md}'",
     "example:watch": "nodemon --signal SIGINT -e ts,js -x npm run example",
-    "example": "concurrently 'npm run example:gateway' 'npm run example:transformed-server' 'npm run example:extension-server'",
+    "example": "concurrently 'npm run example:gateway' 'npm run example:transformed-server' 'npm run example:federation-server'",
     "example:gateway": "wait-on tcp:4001 && wait-on tcp:4002 && ts-node example/gateway",
     "example:transformed-server": "ts-node example/transformed-server",
-    "example:extension-server": "ts-node example/extension-server"
+    "example:federation-server": "ts-node example/federation-server"
   },
   "keywords": [],
   "author": "",
