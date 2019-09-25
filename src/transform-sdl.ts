@@ -35,7 +35,7 @@ export function addFederationAnnotations<TContext>(
 ): string {
   const ast = parse(schema);
 
-  const typesTodo = new Set(
+  const objectTypesTodo = new Set(
     Object.entries(config)
       .filter(
         ([, config]) =>
@@ -58,8 +58,8 @@ export function addFederationAnnotations<TContext>(
         node: ObjectTypeDefinitionNode,
       ): ObjectTypeDefinitionNode | ObjectTypeExtensionNode | undefined {
         currentTypeName = node.name.value;
-        if (typesTodo.has(currentTypeName)) {
-          typesTodo.delete(currentTypeName);
+        if (objectTypesTodo.has(currentTypeName)) {
+          objectTypesTodo.delete(currentTypeName);
 
           const { keyFields, extend } = config[currentTypeName];
 
@@ -100,15 +100,15 @@ export function addFederationAnnotations<TContext>(
     },
   });
 
-  if (typesTodo.size !== 0) {
+  if (objectTypesTodo.size !== 0) {
     throw new Error(
-      `Could not add key directives to types: ${Array.from(typesTodo).join(
+      `Could not add key directives or extend types: ${Array.from(objectTypesTodo).join(
         ', ',
       )}`,
     );
   }
 
-  if (Object.keys(externalFieldsToDo).length != 0) {
+  if (Object.keys(externalFieldsToDo).length !== 0) {
     throw new Error(
       `Could not mark these fields as external: ${Object.entries(
         externalFieldsToDo,

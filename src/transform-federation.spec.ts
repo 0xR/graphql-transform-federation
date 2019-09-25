@@ -98,4 +98,23 @@ describe('Transform Federation', () => {
       },
     });
   });
+
+  it('should throw and error when adding resolveReference on a scalar', () => {
+    const executableSchema = makeExecutableSchema({
+      typeDefs: 'scalar MockScalar',
+      resolvers: {},
+    });
+
+    expect(() =>
+      addFederationFields(executableSchema, {
+        MockScalar: {
+          resolveReference() {
+            return {};
+          },
+        },
+      }),
+    ).toThrow(
+      'Type "MockScalar" is not an object type and can\'t have a resolveReference function',
+    );
+  });
 });

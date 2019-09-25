@@ -39,7 +39,7 @@ describe('transform-federation', () => {
         },
       );
     }).toThrow(
-      'Could not add key directives to types: NotProduct, NotProduct2',
+      'Could not add key directives or extend types: NotProduct, NotProduct2',
     );
   });
 
