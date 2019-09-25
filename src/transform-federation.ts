@@ -36,11 +36,16 @@ export function addFederationFields<TContext>(
 
   const entityTypes = Object.fromEntries(
     Object.entries(federationConfig)
-      .filter(
-        ([, { keyFields, extend }]) =>
-          keyFields && keyFields.length && !!extend,
-      )
-      .map(([typeName]) => [typeName, schemaWithQueryType.getType(typeName)]),
+      .filter(([, { keyFields }]) => keyFields && keyFields.length)
+      .map(([typeName]) => {
+        const type = schemaWithQueryType.getType(typeName);
+        if (!isObjectType(type)) {
+          throw new Error(
+            `Type "${typeName}" is not an object type and can't have a key directive`,
+          );
+        }
+        return [typeName, type];
+      }),
   );
 
   const hasEntities = !!Object.keys(entityTypes).length;
@@ -70,10 +75,10 @@ export function addFederationFields<TContext>(
   const schemaWithUnionType = transformSchema(
     schemaWithFederationQueryType,
     type => {
-      if (hasEntities && isUnionType(type) && type.name === EntityType.name) {
+      if (isUnionType(type) && type.name === EntityType.name) {
         return new GraphQLUnionType({
           ...EntityType.toConfig(),
-          types: Object.values(entityTypes).filter(isObjectType),
+          types: Object.values(entityTypes),
         });
       }
       return undefined;
@@ -85,9 +90,12 @@ export function addFederationFields<TContext>(
     ([typeName, currentFederationConfig]) => {
       if (currentFederationConfig.resolveReference) {
         const type = schemaWithUnionType.getType(typeName);
-        if (isObjectType(type)) {
-          type.resolveReference = currentFederationConfig.resolveReference;
+        if (!isObjectType(type)) {
+          throw new Error(
+            `Type "${typeName}" is not an object type and can't have a resolveReference function`,
+          );
         }
+        type.resolveReference = currentFederationConfig.resolveReference;
       }
     },
   );
