@@ -8,9 +8,9 @@ describe('Transform Federation', () => {
   it('should add a _service field', async () => {
     const executableSchema = makeExecutableSchema({
       typeDefs: `
-    type Product {
-      id: ID!
-    }
+        type Product {
+          id: ID!
+        }
       `,
       resolvers: {},
     });
@@ -41,6 +41,59 @@ describe('Transform Federation', () => {
             }\n
           `,
         },
+      },
+    });
+  });
+  it('should resolve references', async () => {
+    const executableSchema = makeExecutableSchema({
+      typeDefs: `
+    type Product {
+      id: ID!
+      name: String!
+    }
+      `,
+      resolvers: {},
+    });
+
+    const federationSchema = addFederationFields(executableSchema, {
+      Product: {
+        keyFields: ['id'],
+        resolveReference(reference) {
+          return {
+            ...reference,
+            name: 'mock name',
+          };
+        },
+      },
+    });
+
+    expect(
+      await execute({
+        schema: federationSchema,
+        document: parse(`
+          query{
+            _entities (representations: {
+              __typename:"Product"
+              id: "1"
+            }) {
+              __typename
+              ...on Product {
+                id
+                name
+              }
+            }
+          } 
+        `),
+      }),
+    ).toEqual({
+      data: {
+        _entities: [
+          {
+            __typename: 'Product',
+            id: '1',
+            name: 'mock name',
+          },
+        ],
       },
     });
   });
