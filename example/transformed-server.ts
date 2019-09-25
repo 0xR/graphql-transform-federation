@@ -1,8 +1,5 @@
-import {
-  ApolloServer,
-  delegateToSchema,
-  makeExecutableSchema,
-} from 'apollo-server';
+import { delegateToSchema, makeExecutableSchema } from 'graphql-tools';
+import { ApolloServer } from 'apollo-server';
 import { addFederationFields } from '../src/transform-federation';
 
 const products = [
