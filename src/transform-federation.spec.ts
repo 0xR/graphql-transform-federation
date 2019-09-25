@@ -1,5 +1,5 @@
 import { makeExecutableSchema, transformSchema } from 'graphql-tools';
-import { addFederationFields } from './transform-federation';
+import { transformSchemaFederation } from './transform-federation';
 import { execute } from 'graphql/execution/execute';
 import { DirectiveNode, parse, print, visit } from 'graphql/language';
 import dedent = require('dedent');
@@ -15,7 +15,7 @@ describe('Transform Federation', () => {
       resolvers: {},
     });
 
-    const federationSchema = addFederationFields(executableSchema, {
+    const federationSchema = transformSchemaFederation(executableSchema, {
       Product: {
         keyFields: ['id'],
       },
@@ -55,7 +55,7 @@ describe('Transform Federation', () => {
       resolvers: {},
     });
 
-    const federationSchema = addFederationFields(executableSchema, {
+    const federationSchema = transformSchemaFederation(executableSchema, {
       Product: {
         keyFields: ['id'],
         extend: true,
@@ -106,7 +106,7 @@ describe('Transform Federation', () => {
     });
 
     expect(() =>
-      addFederationFields(executableSchema, {
+      transformSchemaFederation(executableSchema, {
         MockScalar: {
           resolveReference() {
             return {};

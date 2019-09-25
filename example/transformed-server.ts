@@ -1,6 +1,6 @@
 import { delegateToSchema, makeExecutableSchema } from 'graphql-tools';
 import { ApolloServer } from 'apollo-server';
-import { addFederationFields } from '../src/transform-federation';
+import { transformSchemaFederation } from '../src/transform-federation';
 
 const products = [
   {
@@ -33,7 +33,7 @@ const schemaWithoutFederation = makeExecutableSchema({
   },
 });
 
-const federationSchema = addFederationFields(schemaWithoutFederation, {
+const federationSchema = transformSchemaFederation(schemaWithoutFederation, {
   Query: {
     extend: true,
   },

@@ -14,7 +14,7 @@ import {
   serviceField,
 } from '@apollo/federation/dist/types';
 
-export function addFederationFields<TContext>(
+export function transformSchemaFederation<TContext>(
   schema: GraphQLSchema,
   federationConfig: FederationConfig<TContext>,
 ): GraphQLSchema {
