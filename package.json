@@ -25,6 +25,10 @@
   ],
   "keywords": [],
   "author": "Ruben Oostinga",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/0xR/graphql-transform-federation.git"
+  },
   "license": "ISC",
   "devDependencies": {
     "@apollo/federation": "^0.9.4",
