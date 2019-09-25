@@ -1,12 +1,11 @@
-import { mergeSchemas } from 'graphql-tools';
 import { transformSchema } from 'apollo-graphql';
 import {
   GraphQLObjectType,
   GraphQLSchema,
-  printSchema,
+  GraphQLUnionType,
   isObjectType,
   isUnionType,
-  GraphQLUnionType,
+  printSchema,
 } from 'graphql';
 import { addFederationAnnotations, FederationConfig } from './transform-sdl';
 import {
