@@ -102,9 +102,9 @@ export function addFederationAnnotations<TContext>(
 
   if (objectTypesTodo.size !== 0) {
     throw new Error(
-      `Could not add key directives or extend types: ${Array.from(objectTypesTodo).join(
-        ', ',
-      )}`,
+      `Could not add key directives or extend types: ${Array.from(
+        objectTypesTodo,
+      ).join(', ')}`,
     );
   }
 

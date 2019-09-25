@@ -1,8 +1,9 @@
 {
   "name": "graphql-transform-federation",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "Add GraphQL federation to an existing GraphQL schema",
+  "main": "dist/transform-federation.js",
+  "types": "dist/transform-federation.d.ts",
   "scripts": {
     "test": "jest",
     "test:watch": "npm run test -- --watch",
@@ -12,10 +13,18 @@
     "example": "concurrently 'npm run example:gateway' 'npm run example:transformed-server' 'npm run example:federation-server'",
     "example:gateway": "wait-on tcp:4001 && wait-on tcp:4002 && ts-node example/gateway",
     "example:transformed-server": "ts-node example/transformed-server",
-    "example:federation-server": "ts-node example/federation-server"
+    "example:federation-server": "ts-node example/federation-server",
+    "prebuild": "rimraf dist",
+    "build": "tsc",
+    "prepublish": "npm run build"
   },
+  "files": [
+    "src",
+    "dist",
+    "README.md"
+  ],
   "keywords": [],
-  "author": "",
+  "author": "Ruben Oostinga",
   "license": "ISC",
   "devDependencies": {
     "@apollo/federation": "^0.9.4",
@@ -35,5 +44,9 @@
     "ts-node": "^8.4.1",
     "typescript": "^3.6.3",
     "wait-on": "^3.3.0"
+  },
+  "peerDependencies": {
+    "@apollo/federation": "^0.9.4",
+    "graphql": "^14.5.7"
   }
 }
