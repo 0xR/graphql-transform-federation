@@ -23,7 +23,7 @@ Run the tests
 - [x] add `@key(fields: "...")` directives to types
 - [x] expose `{ _server { sdl } }`
 - [x] convert types to `extend` types
-- [ ] resolving `{ _entities(representations: ...) }` queries
+- [x] resolving `{ _entities(representations: ...) }` queries
 - [x] adding `@external` directives
 - [ ] adding `@requires` directives
 - [ ] adding `@provides` directives

@@ -37,7 +37,8 @@ export function addFederationFields<TContext>(
   const entityTypes = Object.fromEntries(
     Object.entries(federationConfig)
       .filter(
-        ([, { keyFields, extend }]) => keyFields && keyFields.length && !extend,
+        ([, { keyFields, extend }]) =>
+          keyFields && keyFields.length && !!extend,
       )
       .map(([typeName]) => [typeName, schemaWithQueryType.getType(typeName)]),
   );

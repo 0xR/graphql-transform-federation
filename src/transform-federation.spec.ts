@@ -58,6 +58,7 @@ describe('Transform Federation', () => {
     const federationSchema = addFederationFields(executableSchema, {
       Product: {
         keyFields: ['id'],
+        extend: true,
         resolveReference(reference) {
           return {
             ...reference,
