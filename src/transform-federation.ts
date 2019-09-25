@@ -1,4 +1,4 @@
-import { makeExecutableSchema, mergeSchemas, } from 'graphql-tools';
+import { makeExecutableSchema, mergeSchemas } from 'graphql-tools';
 import { GraphQLSchema, printSchema } from 'graphql';
 import { addFederationAnnotations, FederationConfig } from './transform-sdl';
 
@@ -6,7 +6,10 @@ export function addFederationFields(
   schema: GraphQLSchema,
   config: FederationConfig,
 ): GraphQLSchema {
-  const schemaWithKeyDirectives = addFederationAnnotations(printSchema(schema), config);
+  const schemaWithKeyDirectives = addFederationAnnotations(
+    printSchema(schema),
+    config,
+  );
 
   const serviceSchema = makeExecutableSchema({
     typeDefs: `
