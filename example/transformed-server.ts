@@ -40,7 +40,11 @@ const federationSchema = transformSchemaFederation(schemaWithoutFederation, {
   Product: {
     extend: true,
     keyFields: ['id'],
-    external: ['id'],
+    fields: {
+      id: {
+        external: true
+      }
+    },
     resolveReference(reference, context: { [key: string]: any }, info) {
       return delegateToSchema({
         schema: info.schema,
