@@ -7,12 +7,22 @@ import {
   isUnionType,
   printSchema,
 } from 'graphql';
-import { addFederationAnnotations, FederationConfig } from './transform-sdl';
+import { addFederationAnnotations } from './transform-sdl';
 import {
   entitiesField,
   EntityType,
+  GraphQLReferenceResolver,
   serviceField,
 } from '@apollo/federation/dist/types';
+
+export interface FederationConfig<TContext> {
+  [typeName: string]: {
+    keyFields?: string[];
+    extend?: boolean;
+    external?: string[];
+    resolveReference?: GraphQLReferenceResolver<TContext>;
+  };
+}
 
 export function transformSchemaFederation<TContext>(
   schema: GraphQLSchema,

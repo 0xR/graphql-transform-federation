@@ -8,7 +8,7 @@ import {
   visit,
 } from 'graphql/language';
 import { createDirectiveNode, createStringValueNode } from './ast-builders';
-import { GraphQLReferenceResolver } from '@apollo/federation/dist/types';
+import { FederationConfig } from './transform-federation';
 
 function createExternalDirectiveNode() {
   return createDirectiveNode('external');
@@ -18,15 +18,6 @@ function createKeyDirectiveNode(fields: string): DirectiveNode {
   return createDirectiveNode('key', {
     fields: createStringValueNode(fields),
   });
-}
-
-export interface FederationConfig<TContext> {
-  [typeName: string]: {
-    keyFields?: string[];
-    extend?: boolean;
-    external?: string[];
-    resolveReference?: GraphQLReferenceResolver<TContext>;
-  };
 }
 
 export function addFederationAnnotations<TContext>(
