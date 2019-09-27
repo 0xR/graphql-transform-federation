@@ -62,7 +62,7 @@ describe('transform-federation', () => {
       }\n`);
   });
 
-  it('should mark fields as external', () => {
+  it('should add directive to fields', () => {
     expect(
       addFederationAnnotations(
         `
@@ -71,13 +71,19 @@ describe('transform-federation', () => {
       }`,
         {
           Product: {
-            external: ['id'],
+            fields: {
+              id: {
+                external: true,
+                provides: 'mock provides',
+                requires: 'mock requires',
+              },
+            },
           },
         },
       ),
     ).toEqual(dedent`
       type Product {
-        id: Int @external
+        id: Int @external @provides(fields: "mock provides") @requires(fields: "mock requires")
       }\n`);
   });
 
@@ -91,12 +97,19 @@ describe('transform-federation', () => {
       `,
         {
           NotProduct: {
-            external: ['field1', 'field2'],
+            fields: {
+              field1: {
+                external: true,
+              },
+              field2: {
+                provides: 'mock provides',
+              },
+            },
           },
         },
       );
     }).toThrow(
-      'Could not mark these fields as external: NotProduct.field1, NotProduct.field2',
+      'Could not add directive to these fields: NotProduct.field1, NotProduct.field2',
     );
   });
 });

@@ -1,5 +1,4 @@
 import {
-  DirectiveNode,
   FieldDefinitionNode,
   ObjectTypeDefinitionNode,
   ObjectTypeExtensionNode,
@@ -8,37 +7,64 @@ import {
   visit,
 } from 'graphql/language';
 import { createDirectiveNode, createStringValueNode } from './ast-builders';
-import { FederationConfig } from './transform-federation';
+import {
+  FederationConfig,
+  FederationFieldConfig,
+  FederationFieldsConfig,
+  FederationObjectConfig,
+} from './transform-federation';
 
-function createExternalDirectiveNode() {
-  return createDirectiveNode('external');
-}
-
-function createKeyDirectiveNode(fields: string): DirectiveNode {
-  return createDirectiveNode('key', {
+function createDirectiveWithFields(directiveName: string, fields: string) {
+  return createDirectiveNode(directiveName, {
     fields: createStringValueNode(fields),
   });
 }
 
+function isFieldConfigToDo({
+  external,
+  provides,
+  requires,
+}: FederationFieldConfig): boolean {
+  return Boolean(external || provides || requires);
+}
+
+function filterFieldsConfigToDo(
+  fieldsConfig: FederationFieldsConfig,
+): FederationFieldsConfig {
+  return Object.fromEntries(
+    Object.entries(fieldsConfig).filter(([typeName, fieldConfig]) =>
+      isFieldConfigToDo(fieldConfig),
+    ),
+  );
+}
+
+function isObjectConfigToDo<TContext>({
+  extend,
+  keyFields,
+}: FederationObjectConfig<TContext>): boolean {
+  return Boolean((keyFields && keyFields.length) || extend);
+}
+
 export function addFederationAnnotations<TContext>(
   schema: string,
-  config: FederationConfig<TContext>,
+  federationConfig: FederationConfig<TContext>,
 ): string {
   const ast = parse(schema);
 
   const objectTypesTodo = new Set(
-    Object.entries(config)
-      .filter(
-        ([, config]) =>
-          (config.keyFields && config.keyFields.length) || config.extend,
-      )
+    Object.entries(federationConfig)
+      .filter(([, config]) => isObjectConfigToDo<TContext>(config))
       .map(([typeName]) => typeName),
   );
 
-  const externalFieldsToDo = Object.fromEntries(
-    Object.entries(config)
-      .filter(([typeName, config]) => !!config.external)
-      .map(([typeName, config]) => [typeName, new Set(config.external)]),
+  const fieldTypesTodo: {
+    [objectTypeName: string]: FederationFieldsConfig;
+  } = Object.fromEntries(
+    Object.entries(federationConfig)
+      .flatMap(([typeName, { fields }]) =>
+        fields ? [[typeName, filterFieldsConfigToDo(fields)]] : [],
+      )
+      .filter(([typeName, fieldsConfig]) => Object.keys(fieldsConfig).length),
   );
 
   let currentTypeName: string | undefined = undefined;
@@ -52,10 +78,12 @@ export function addFederationAnnotations<TContext>(
         if (objectTypesTodo.has(currentTypeName)) {
           objectTypesTodo.delete(currentTypeName);
 
-          const { keyFields, extend } = config[currentTypeName];
+          const { keyFields, extend } = federationConfig[currentTypeName];
 
           const newDirectives = keyFields
-            ? keyFields.map(keyField => createKeyDirectiveNode(keyField))
+            ? keyFields.map(keyField =>
+                createDirectiveWithFields('key', keyField),
+              )
             : [];
 
           return {
@@ -70,22 +98,44 @@ export function addFederationAnnotations<TContext>(
       },
     },
     FieldDefinition(node): FieldDefinitionNode | undefined {
-      if (currentTypeName && externalFieldsToDo[currentTypeName]) {
-        const currentExternalFieldsToDo = externalFieldsToDo[currentTypeName];
-        if (currentExternalFieldsToDo.has(node.name.value)) {
-          currentExternalFieldsToDo.delete(node.name.value);
-          if (currentExternalFieldsToDo.size === 0) {
-            delete externalFieldsToDo[currentTypeName];
-          }
-
-          return {
-            ...node,
-            directives: [
-              ...(node.directives || []),
-              createExternalDirectiveNode(),
-            ],
-          };
+      const currentFieldsTodo =
+        currentTypeName && fieldTypesTodo[currentTypeName];
+      if (
+        currentTypeName &&
+        currentFieldsTodo &&
+        currentFieldsTodo[node.name.value]
+      ) {
+        const currentFieldConfig = currentFieldsTodo[node.name.value];
+        delete currentFieldsTodo[node.name.value];
+        if (Object.keys(currentFieldsTodo).length === 0) {
+          delete fieldTypesTodo[currentTypeName];
         }
+
+        return {
+          ...node,
+          directives: [
+            ...(node.directives || []),
+            ...(currentFieldConfig.external
+              ? [createDirectiveNode('external')]
+              : []),
+            ...(currentFieldConfig.provides
+              ? [
+                  createDirectiveWithFields(
+                    'provides',
+                    currentFieldConfig.provides,
+                  ),
+                ]
+              : []),
+            ...(currentFieldConfig.requires
+              ? [
+                  createDirectiveWithFields(
+                    'requires',
+                    currentFieldConfig.requires,
+                  ),
+                ]
+              : []),
+          ],
+        };
       }
       return undefined;
     },
@@ -99,13 +149,11 @@ export function addFederationAnnotations<TContext>(
     );
   }
 
-  if (Object.keys(externalFieldsToDo).length !== 0) {
+  if (Object.keys(fieldTypesTodo).length !== 0) {
     throw new Error(
-      `Could not mark these fields as external: ${Object.entries(
-        externalFieldsToDo,
-      )
-        .flatMap(([typeName, externalFields]) => {
-          return Array.from(externalFields).map(
+      `Could not add directive to these fields: ${Object.entries(fieldTypesTodo)
+        .flatMap(([typeName, fieldsConfig]) => {
+          return Object.keys(fieldsConfig).map(
             externalField => `${typeName}.${externalField}`,
           );
         })

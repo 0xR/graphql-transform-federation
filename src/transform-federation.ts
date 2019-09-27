@@ -15,13 +15,25 @@ import {
   serviceField,
 } from '@apollo/federation/dist/types';
 
+export interface FederationFieldConfig {
+  external?: boolean;
+  provides?: string;
+  requires?: string;
+}
+
+export interface FederationFieldsConfig {
+  [typeName: string]: FederationFieldConfig;
+}
+
+export interface FederationObjectConfig<TContext> {
+  keyFields?: string[];
+  extend?: boolean;
+  resolveReference?: GraphQLReferenceResolver<TContext>;
+  fields?: FederationFieldsConfig;
+}
+
 export interface FederationConfig<TContext> {
-  [typeName: string]: {
-    keyFields?: string[];
-    extend?: boolean;
-    external?: string[];
-    resolveReference?: GraphQLReferenceResolver<TContext>;
-  };
+  [typeName: string]: FederationObjectConfig<TContext>;
 }
 
 export function transformSchemaFederation<TContext>(
