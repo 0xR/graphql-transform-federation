@@ -21,7 +21,7 @@ export interface FederationFieldConfig {
 }
 
 export interface FederationFieldsConfig {
-  [typeName: string]: FederationFieldConfig;
+  [fieldName: string]: FederationFieldConfig;
 }
 
 export interface FederationObjectConfig<TContext> {
@@ -32,7 +32,7 @@ export interface FederationObjectConfig<TContext> {
 }
 
 export interface FederationConfig<TContext> {
-  [typeName: string]: FederationObjectConfig<TContext>;
+  [objectName: string]: FederationObjectConfig<TContext>;
 }
 
 export function transformSchemaFederation<TContext>(
@@ -57,14 +57,14 @@ export function transformSchemaFederation<TContext>(
   const entityTypes = Object.fromEntries(
     Object.entries(federationConfig)
       .filter(([, { keyFields }]) => keyFields && keyFields.length)
-      .map(([typeName]) => {
-        const type = schemaWithQueryType.getType(typeName);
+      .map(([objectName]) => {
+        const type = schemaWithQueryType.getType(objectName);
         if (!isObjectType(type)) {
           throw new Error(
-            `Type "${typeName}" is not an object type and can't have a key directive`,
+            `Type "${objectName}" is not an object type and can't have a key directive`,
           );
         }
-        return [typeName, type];
+        return [objectName, type];
       }),
   );
 
@@ -107,12 +107,12 @@ export function transformSchemaFederation<TContext>(
 
   // Not using transformSchema since it will remove resolveReference
   Object.entries(federationConfig).forEach(
-    ([typeName, currentFederationConfig]) => {
+    ([objectName, currentFederationConfig]) => {
       if (currentFederationConfig.resolveReference) {
-        const type = schemaWithUnionType.getType(typeName);
+        const type = schemaWithUnionType.getType(objectName);
         if (!isObjectType(type)) {
           throw new Error(
-            `Type "${typeName}" is not an object type and can't have a resolveReference function`,
+            `Type "${objectName}" is not an object type and can't have a resolveReference function`,
           );
         }
         type.resolveReference = currentFederationConfig.resolveReference;

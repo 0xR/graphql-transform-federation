@@ -31,7 +31,7 @@ function filterFieldsConfigToDo(
   fieldsConfig: FederationFieldsConfig,
 ): FederationFieldsConfig {
   return Object.fromEntries(
-    Object.entries(fieldsConfig).filter(([typeName, fieldConfig]) =>
+    Object.entries(fieldsConfig).filter(([, fieldConfig]) =>
       isFieldConfigToDo(fieldConfig),
     ),
   );
@@ -53,31 +53,31 @@ export function addFederationAnnotations<TContext>(
   const objectTypesTodo = new Set(
     Object.entries(federationConfig)
       .filter(([, config]) => isObjectConfigToDo<TContext>(config))
-      .map(([typeName]) => typeName),
+      .map(([objectName]) => objectName),
   );
 
   const fieldTypesTodo: {
-    [objectTypeName: string]: FederationFieldsConfig;
+    [objectName: string]: FederationFieldsConfig;
   } = Object.fromEntries(
     Object.entries(federationConfig)
-      .flatMap(([typeName, { fields }]) =>
-        fields ? [[typeName, filterFieldsConfigToDo(fields)]] : [],
+      .flatMap(([objectName, { fields }]) =>
+        fields ? [[objectName, filterFieldsConfigToDo(fields)]] : [],
       )
-      .filter(([typeName, fieldsConfig]) => Object.keys(fieldsConfig).length),
+      .filter(([, fieldsConfig]) => Object.keys(fieldsConfig).length),
   );
 
-  let currentTypeName: string | undefined = undefined;
+  let currentObjectName: string | undefined = undefined;
 
   const withDirectives = visit(ast, {
     ObjectTypeDefinition: {
       enter(
         node: ObjectTypeDefinitionNode,
       ): ObjectTypeDefinitionNode | ObjectTypeExtensionNode | undefined {
-        currentTypeName = node.name.value;
-        if (objectTypesTodo.has(currentTypeName)) {
-          objectTypesTodo.delete(currentTypeName);
+        currentObjectName = node.name.value;
+        if (objectTypesTodo.has(currentObjectName)) {
+          objectTypesTodo.delete(currentObjectName);
 
-          const { keyFields, extend } = federationConfig[currentTypeName];
+          const { keyFields, extend } = federationConfig[currentObjectName];
 
           const newDirectives = keyFields
             ? keyFields.map(keyField =>
@@ -93,21 +93,21 @@ export function addFederationAnnotations<TContext>(
         }
       },
       leave() {
-        currentTypeName = undefined;
+        currentObjectName = undefined;
       },
     },
     FieldDefinition(node): FieldDefinitionNode | undefined {
       const currentFieldsTodo =
-        currentTypeName && fieldTypesTodo[currentTypeName];
+        currentObjectName && fieldTypesTodo[currentObjectName];
       if (
-        currentTypeName &&
+        currentObjectName &&
         currentFieldsTodo &&
         currentFieldsTodo[node.name.value]
       ) {
         const currentFieldConfig = currentFieldsTodo[node.name.value];
         delete currentFieldsTodo[node.name.value];
         if (Object.keys(currentFieldsTodo).length === 0) {
-          delete fieldTypesTodo[currentTypeName];
+          delete fieldTypesTodo[currentObjectName];
         }
 
         return {
@@ -143,9 +143,9 @@ export function addFederationAnnotations<TContext>(
   if (Object.keys(fieldTypesTodo).length !== 0) {
     throw new Error(
       `Could not add directive to these fields: ${Object.entries(fieldTypesTodo)
-        .flatMap(([typeName, fieldsConfig]) => {
+        .flatMap(([objectName, fieldsConfig]) => {
           return Object.keys(fieldsConfig).map(
-            externalField => `${typeName}.${externalField}`,
+            externalField => `${objectName}.${externalField}`,
           );
         })
         .join(', ')}`,
