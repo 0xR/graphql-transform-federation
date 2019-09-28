@@ -42,8 +42,8 @@ const federationSchema = transformSchemaFederation(schemaWithoutFederation, {
     keyFields: ['id'],
     fields: {
       id: {
-        external: true
-      }
+        external: true,
+      },
     },
     resolveReference(reference, context: { [key: string]: any }, info) {
       return delegateToSchema({
