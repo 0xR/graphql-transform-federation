@@ -18,7 +18,6 @@ import {
 export interface FederationFieldConfig {
   external?: boolean;
   provides?: string;
-  requires?: string;
 }
 
 export interface FederationFieldsConfig {

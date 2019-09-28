@@ -75,7 +75,6 @@ describe('transform-federation', () => {
               id: {
                 external: true,
                 provides: 'mock provides',
-                requires: 'mock requires',
               },
             },
           },
@@ -83,7 +82,7 @@ describe('transform-federation', () => {
       ),
     ).toEqual(dedent`
       type Product {
-        id: Int @external @provides(fields: "mock provides") @requires(fields: "mock requires")
+        id: Int @external @provides(fields: "mock provides")
       }\n`);
   });
 
