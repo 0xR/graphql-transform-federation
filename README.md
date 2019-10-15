@@ -3,17 +3,32 @@
 If you want to use
 [GraphQL federation](https://www.apollographql.com/docs/apollo-server/federation/introduction/),
 but you can't rebuild your current GraphQL schema, you can use this transform to
-add GraphQL federation functionality to an existing schema.
+add GraphQL federation functionality to an existing schema. You need this when
+you are using a managed GraphQL service or a generated schema which doesn't
+support federation (yet).
+
+If you are using apollo-server or another schema
+builder that supports federation you don't need this transform you should
+[add the federation directives](https://www.apollographql.com/docs/apollo-server/federation/implementing/)
+directly.
 
 This transform will add the resolvers and directives to conform to the
 [federation specification](https://www.apollographql.com/docs/apollo-server/federation/federation-spec/#federation-schema-specification).
 Much of the
 [federation sourcecode](https://github.com/apollographql/apollo-server/tree/master/packages/apollo-federation)
-could be reused.
+could be reused ensuring it is compliant to the specification.
+
+![Architecture diagram for graphql-transform-federation](https://docs.google.com/drawings/d/e/2PACX-1vQkWQKeH9OClskaHoV0XPoVGl-w1_MEFGkhuRW03KG0R3SHXJXv9E4pOF4IR0EnoubS1vn1a_33UAnb/pub?w=990&h=956 'Architecture using a remote schema')
 
 ## Usage
 
-This example shows a configuration where the transformed schema extends an
+You can use this transform on a local or a remote GraphQL schema. When using a
+remote schema your service acts a middleware layer as shown in the diagram
+above. Check the
+[remote schema documentation](https://www.apollographql.com/docs/graphql-tools/remote-schemas/)
+how to get an executable schema that you can use with this transform.
+
+The example below shows a configuration where the transformed schema extends an
 existing schema. It already had a resolver `productById` which is used to relate
 products between the two schemas. This example can be started using
 [npm run example](#npm-run-example).
