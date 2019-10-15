@@ -7,8 +7,8 @@ add GraphQL federation functionality to an existing schema. You need this when
 you are using a managed GraphQL service or a generated schema which doesn't
 support federation (yet).
 
-If you are using apollo-server or another schema
-builder that supports federation you don't need this transform you should
+If you are using apollo-server or another schema builder that supports
+federation you don't need this transform you should
 [add the federation directives](https://www.apollographql.com/docs/apollo-server/federation/implementing/)
 directly.
 
@@ -18,6 +18,10 @@ Much of the
 [federation sourcecode](https://github.com/apollographql/apollo-server/tree/master/packages/apollo-federation)
 could be reused ensuring it is compliant to the specification.
 
+Check out the
+[blogpost introducing graphql-tranform-federation](https://xebia.com/blog/graphql-federation-for-everyone/)
+for more background information.
+
 ![Architecture diagram for graphql-transform-federation](https://docs.google.com/drawings/d/e/2PACX-1vQkWQKeH9OClskaHoV0XPoVGl-w1_MEFGkhuRW03KG0R3SHXJXv9E4pOF4IR0EnoubS1vn1a_33UAnb/pub?w=990&h=956 'Architecture using a remote schema')
 
 ## Usage
@@ -26,7 +30,7 @@ You can use this transform on a local or a remote GraphQL schema. When using a
 remote schema your service acts a middleware layer as shown in the diagram
 above. Check the
 [remote schema documentation](https://www.apollographql.com/docs/graphql-tools/remote-schemas/)
-how to get an executable schema that you can use with this transform.
+for how to get an executable schema that you can use with this transform.
 
 The example below shows a configuration where the transformed schema extends an
 existing schema. It already had a resolver `productById` which is used to relate
