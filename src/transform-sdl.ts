@@ -61,10 +61,10 @@ export function addFederationAnnotations<TContext>(
     [objectName: string]: FederationFieldsConfig;
   } = Object.fromEntries(
     Object.entries(federationConfig)
+      .filter(([, { fields }]) => fields && filterFieldsConfigToDo(fields).length)
       .flatMap(([objectName, { fields }]) =>
         fields ? [[objectName, filterFieldsConfigToDo(fields)]] : [],
       )
-      .filter(([, fieldsConfig]) => Object.keys(fieldsConfig).length),
   );
 
   let currentObjectName: string | undefined = undefined;
@@ -92,6 +92,7 @@ export function addFederationAnnotations<TContext>(
             kind: extend ? 'ObjectTypeExtension' : node.kind,
           };
         }
+        return undefined;
       },
       leave() {
         currentObjectName = undefined;

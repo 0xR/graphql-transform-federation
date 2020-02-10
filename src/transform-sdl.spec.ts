@@ -1,7 +1,7 @@
 import dedent from 'dedent';
 import { addFederationAnnotations } from './transform-sdl';
 
-describe('transform-federation', () => {
+describe('transform-sdl', () => {
   it('should add key directives to sdl', () => {
     expect(
       addFederationAnnotations(

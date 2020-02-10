@@ -16,6 +16,7 @@
     "example:federation-server": "ts-node example/federation-server",
     "prebuild": "rimraf dist",
     "build": "tsc",
+    "problems": "tsc --noEmit",
     "prepublishOnly": "yarn build"
   },
   "files": [
@@ -46,11 +47,14 @@
     "prettier": "^1.18.2",
     "ts-jest": "^24.1.0",
     "ts-node": "^8.4.1",
-    "typescript": "^3.6.3",
+    "typescript": "^3.7.5",
     "wait-on": "^3.3.0"
   },
   "peerDependencies": {
     "@apollo/federation": "^0.9.4",
     "graphql": "^14.5.7"
+  },
+  "dependencies": {
+    "@resideo/tsconfig": "^0.0.5"
   }
 }
