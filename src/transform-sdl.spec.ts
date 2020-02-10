@@ -75,6 +75,7 @@ describe('transform-sdl', () => {
               id: {
                 external: true,
                 provides: 'mock provides',
+                requires: 'a { query }'
               },
             },
           },
@@ -82,7 +83,7 @@ describe('transform-sdl', () => {
       ),
     ).toEqual(dedent`
       type Product {
-        id: Int @external @provides(fields: "mock provides")
+        id: Int @external @provides(fields: "mock provides") @requires(fields: "a { query }")
       }\n`);
   });
 
@@ -103,12 +104,15 @@ describe('transform-sdl', () => {
               field2: {
                 provides: 'mock provides',
               },
+              field3: {
+                requires: 'mock requires',
+              },
             },
           },
         },
       );
     }).toThrow(
-      'Could not add directive to these fields: NotProduct.field1, NotProduct.field2',
+      'Could not add directive to these fields: NotProduct.field1, NotProduct.field2, NotProduct.field3',
     );
   });
 });
