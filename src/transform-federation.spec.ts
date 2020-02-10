@@ -2,7 +2,7 @@ import { makeExecutableSchema } from 'graphql-tools';
 import { transformSchemaFederation } from './transform-federation';
 import { execute } from 'graphql/execution/execute';
 import { parse } from 'graphql/language';
-import dedent = require('dedent');
+import dedent from 'dedent';
 
 describe('Transform Federation', () => {
   it('should add a _service field', async () => {
