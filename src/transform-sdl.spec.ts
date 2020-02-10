@@ -75,7 +75,7 @@ describe('transform-sdl', () => {
               id: {
                 external: true,
                 provides: 'mock provides',
-                requires: 'a { query }'
+                requires: 'a { query }',
               },
             },
           },
