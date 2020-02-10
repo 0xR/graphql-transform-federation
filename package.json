@@ -6,7 +6,7 @@
   "types": "dist/transform-federation.d.ts",
   "scripts": {
     "test": "jest",
-    "test:watch": "npm run test -- --watch",
+    "test:watch": "yarn test -- --watch",
     "format": "prettier --check '**/*.{js,ts,json,md}'",
     "format:fix": "prettier --write '**/*.{js,ts,json,md}'",
     "example:watch": "nodemon --signal SIGINT -e ts,js -x npm run example",
@@ -16,7 +16,7 @@
     "example:federation-server": "ts-node example/federation-server",
     "prebuild": "rimraf dist",
     "build": "tsc",
-    "prepublishOnly": "npm run format && npm run test && npm run build"
+    "prepublishOnly": "yarn build"
   },
   "files": [
     "src",
