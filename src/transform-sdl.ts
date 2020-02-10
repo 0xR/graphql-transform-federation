@@ -61,10 +61,12 @@ export function addFederationAnnotations<TContext>(
     [objectName: string]: FederationFieldsConfig;
   } = Object.fromEntries(
     Object.entries(federationConfig)
-      .filter(([, { fields }]) => fields && filterFieldsConfigToDo(fields).length)
+      .filter(
+        ([, { fields }]) => fields && filterFieldsConfigToDo(fields).length,
+      )
       .flatMap(([objectName, { fields }]) =>
         fields ? [[objectName, filterFieldsConfigToDo(fields)]] : [],
-      )
+      ),
   );
 
   let currentObjectName: string | undefined = undefined;
