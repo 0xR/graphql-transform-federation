@@ -1,6 +1,16 @@
 {
-  "name": "graphql-transform-federation",
+  "name": "@resideo/graphql-transform-federation",
   "version": "2.0.1",
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com/",
+    "access": "restricted"
+  },
+  "keywords": [],
+  "repository": {
+    "type": "git",
+    "url": "ssh://git@github.com/resideo/graphql-transform-federation.git"
+  },
+  "license": "MIT",
   "description": "Add GraphQL federation to an existing GraphQL schema",
   "main": "dist/transform-federation.js",
   "types": "dist/transform-federation.d.ts",
@@ -27,13 +37,6 @@
     "dist",
     "README.md"
   ],
-  "keywords": [],
-  "author": "Ruben Oostinga",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/0xR/graphql-transform-federation.git"
-  },
-  "license": "ISC",
   "devDependencies": {
     "@apollo/federation": "^0.9.4",
     "@apollo/gateway": "^0.10.4",
