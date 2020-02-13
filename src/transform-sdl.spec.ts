@@ -1,7 +1,7 @@
 import dedent from 'dedent';
 import { addFederationAnnotations } from './transform-sdl';
 
-describe('transform-federation', () => {
+describe('transform-sdl', () => {
   it('should add key directives to sdl', () => {
     expect(
       addFederationAnnotations(
@@ -75,6 +75,7 @@ describe('transform-federation', () => {
               id: {
                 external: true,
                 provides: 'mock provides',
+                requires: 'a { query }',
               },
             },
           },
@@ -82,7 +83,7 @@ describe('transform-federation', () => {
       ),
     ).toEqual(dedent`
       type Product {
-        id: Int @external @provides(fields: "mock provides")
+        id: Int @external @provides(fields: "mock provides") @requires(fields: "a { query }")
       }\n`);
   });
 
@@ -103,12 +104,15 @@ describe('transform-federation', () => {
               field2: {
                 provides: 'mock provides',
               },
+              field3: {
+                requires: 'mock requires',
+              },
             },
           },
         },
       );
     }).toThrow(
-      'Could not add directive to these fields: NotProduct.field1, NotProduct.field2',
+      'Could not add directive to these fields: NotProduct.field1, NotProduct.field2, NotProduct.field3',
     );
   });
 });

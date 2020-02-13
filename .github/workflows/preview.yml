@@ -1,0 +1,14 @@
+name: Preview
+
+on: pull_request
+
+jobs:
+  publish-previews:
+    name: Publish Previews
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - uses: resideo/actions/publish-previews@v1.3.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.RESIDEO_BOT_TOKEN }}

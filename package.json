@@ -1,12 +1,22 @@
 {
-  "name": "graphql-transform-federation",
+  "name": "@resideo/graphql-transform-federation",
   "version": "2.0.1",
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com/",
+    "access": "restricted"
+  },
+  "keywords": [],
+  "repository": {
+    "type": "git",
+    "url": "ssh://git@github.com/resideo/graphql-transform-federation.git"
+  },
+  "license": "MIT",
   "description": "Add GraphQL federation to an existing GraphQL schema",
   "main": "dist/transform-federation.js",
   "types": "dist/transform-federation.d.ts",
   "scripts": {
     "test": "jest",
-    "test:watch": "npm run test -- --watch",
+    "test:watch": "yarn test -- --watch",
     "format": "prettier --check '**/*.{js,ts,json,md}'",
     "format:fix": "prettier --write '**/*.{js,ts,json,md}'",
     "example:watch": "nodemon --signal SIGINT -e ts,js -x npm run example",
@@ -16,23 +26,25 @@
     "example:federation-server": "ts-node example/federation-server",
     "prebuild": "rimraf dist",
     "build": "tsc",
-    "prepublishOnly": "npm run format && npm run test && npm run build"
+    "problems": "tsc --noEmit",
+    "prepublishOnly": "yarn build"
+  },
+  "jest": {
+    "preset": "@resideo/jest-config"
   },
   "files": [
     "src",
     "dist",
     "README.md"
   ],
-  "keywords": [],
-  "author": "Ruben Oostinga",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/0xR/graphql-transform-federation.git"
-  },
-  "license": "ISC",
   "devDependencies": {
     "@apollo/federation": "^0.9.4",
     "@apollo/gateway": "^0.10.4",
+    "@babel/core": "^7.8.4",
+    "@babel/preset-react": "^7.8.3",
+    "@resideo/babel-preset": "^0.0.7",
+    "@resideo/jest-config": "^0.0.10",
+    "@resideo/tsconfig": "^0.0.5",
     "@types/dedent": "^0.7.0",
     "@types/graphql": "^14.5.0",
     "@types/jest": "^24.0.18",
@@ -46,11 +58,15 @@
     "prettier": "^1.18.2",
     "ts-jest": "^24.1.0",
     "ts-node": "^8.4.1",
-    "typescript": "^3.6.3",
+    "typescript": "^3.7.5",
     "wait-on": "^3.3.0"
   },
   "peerDependencies": {
     "@apollo/federation": "^0.9.4",
     "graphql": "^14.5.7"
+  },
+  "volta": {
+    "node": "12.15.0",
+    "yarn": "1.21.1"
   }
 }

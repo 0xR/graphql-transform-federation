@@ -1,0 +1,17 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  publish-releases:
+    name: Publish Releases
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - uses: resideo/actions/publish-releases@v1.3.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.RESIDEO_BOT_TOKEN }
