@@ -23,8 +23,9 @@ function createDirectiveWithFields(directiveName: string, fields: string) {
 function isFieldConfigToDo({
   external,
   provides,
+  requires,
 }: FederationFieldConfig): boolean {
-  return Boolean(external || provides);
+  return Boolean(external || provides || requires);
 }
 
 function filterFieldsConfigToDo(
@@ -122,6 +123,14 @@ export function addFederationAnnotations<TContext>(
                   createDirectiveWithFields(
                     'provides',
                     currentFieldConfig.provides,
+                  ),
+                ]
+              : []),
+            ...(currentFieldConfig.requires
+              ? [
+                  createDirectiveWithFields(
+                    'requires',
+                    currentFieldConfig.requires,
                   ),
                 ]
               : []),
