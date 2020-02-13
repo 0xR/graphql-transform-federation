@@ -96,6 +96,7 @@ import { GraphQLReferenceResolver } from '@apollo/federation/dist/types';
 interface FederationFieldConfig {
   external?: boolean;
   provides?: string;
+  requires?: string;
 }
 
 interface FederationFieldsConfig {
@@ -136,11 +137,3 @@ Runs the example in watch mode for development.
 ## `npm run test`
 
 Run the tests
-
-## The `requires` directive
-
-When extending an existing type you can resolve derived properties using
-[the `requires` directive](https://www.apollographql.com/docs/apollo-server/federation/advanced-features/#computed-fields).
-When you have an existing schema that you want to transform to a federated
-schema I'm not sure what you would use if for. So unless I learn of a real world
-usecase, I can't implement the `requires` directive.
