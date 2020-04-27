@@ -24,8 +24,9 @@ function isFieldConfigToDo({
   external,
   provides,
   requires,
+  hidden,
 }: FederationFieldConfig): boolean {
-  return Boolean(external || provides || requires);
+  return Boolean(external || provides || requires || hidden);
 }
 
 function filterFieldsConfigToDo(
@@ -41,8 +42,9 @@ function filterFieldsConfigToDo(
 function isObjectConfigToDo<TContext>({
   extend,
   keyFields,
+  hidden,
 }: FederationObjectConfig<TContext>): boolean {
-  return Boolean((keyFields && keyFields.length) || extend);
+  return Boolean((keyFields && keyFields.length) || extend || hidden);
 }
 
 export function addFederationAnnotations<TContext>(
@@ -73,12 +75,15 @@ export function addFederationAnnotations<TContext>(
     ObjectTypeDefinition: {
       enter(
         node: ObjectTypeDefinitionNode,
-      ): ObjectTypeDefinitionNode | ObjectTypeExtensionNode | undefined {
+      ): ObjectTypeDefinitionNode | ObjectTypeExtensionNode | undefined | null {
         currentObjectName = node.name.value;
         if (objectTypesTodo.has(currentObjectName)) {
           objectTypesTodo.delete(currentObjectName);
 
-          const { keyFields, extend } = federationConfig[currentObjectName];
+          const { keyFields, extend, hidden } = federationConfig[currentObjectName];
+          if (hidden) {
+            return null;
+          }
 
           const newDirectives = keyFields
             ? keyFields.map(keyField =>
@@ -97,7 +102,7 @@ export function addFederationAnnotations<TContext>(
         currentObjectName = undefined;
       },
     },
-    FieldDefinition(node): FieldDefinitionNode | undefined {
+    FieldDefinition(node): FieldDefinitionNode | undefined | null {
       const currentFieldsTodo =
         currentObjectName && fieldTypesTodo[currentObjectName];
       if (
@@ -109,6 +114,10 @@ export function addFederationAnnotations<TContext>(
         delete currentFieldsTodo[node.name.value];
         if (Object.keys(currentFieldsTodo).length === 0) {
           delete fieldTypesTodo[currentObjectName];
+        }
+
+        if (currentFieldConfig.hidden) {
+          return null;
         }
 
         return {

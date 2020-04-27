@@ -115,4 +115,51 @@ describe('transform-sdl', () => {
       'Could not add directive to these fields: NotProduct.field1, NotProduct.field2, NotProduct.field3',
     );
   });
+
+  it('should remove hidden fields from sdl', () => {
+    expect(
+      addFederationAnnotations(
+        `
+      type Query {
+        hello: String
+        ok: Boolean
+      }`,
+        {
+          Query: {
+            fields: {
+              ok: {
+                hidden: true
+              }
+            }
+          },
+        },
+      ),
+    ).toEqual(dedent`
+      type Query {
+        hello: String
+      }\n`);
+  });
+
+  it('should remove hidden types from sdl', () => {
+    expect(
+      addFederationAnnotations(
+        `
+      type Query {
+        hello: String
+      }
+      
+      type Unwanted {
+        id: Int
+      }`,
+        {
+          Unwanted: {
+            hidden: true
+          },
+        },
+      ),
+    ).toEqual(dedent`
+      type Query {
+        hello: String
+      }\n`);
+  });
 });
