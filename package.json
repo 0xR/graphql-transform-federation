@@ -39,7 +39,7 @@
     "@types/node": "^13.7.1",
     "apollo-server": "^2.10.0",
     "dedent": "^0.7.0",
-    "graphql": "^14.6.0",
+    "graphql": "^15.4.0",
     "graphql-tools": "^4.0.6",
     "jest": "^25.1.0",
     "nodemon": "^2.0.2",
