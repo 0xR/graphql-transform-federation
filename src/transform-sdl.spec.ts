@@ -21,6 +21,26 @@ describe('transform-sdl', () => {
       }\n`);
   });
 
+  it('should add directives to interface sdl', () => {
+    expect(
+      addFederationAnnotations(
+        `
+      interface Product @keep {
+        id: Int
+      }`,
+        {
+          Product: {
+            keyFields: ['id'],
+            extend: true,
+          },
+        },
+      ),
+    ).toEqual(dedent`
+      extend interface Product @keep @key(fields: "id") {
+        id: Int
+      }\n`);
+  });
+
   it('should throw an error if not all keys were added', () => {
     expect(() => {
       addFederationAnnotations(

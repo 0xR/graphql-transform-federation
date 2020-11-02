@@ -1,5 +1,7 @@
 import {
   FieldDefinitionNode,
+  InterfaceTypeDefinitionNode,
+  InterfaceTypeExtensionNode,
   ObjectTypeDefinitionNode,
   ObjectTypeExtensionNode,
   parse,
@@ -90,6 +92,33 @@ export function addFederationAnnotations<TContext>(
             ...node,
             directives: [...(node.directives || []), ...newDirectives],
             kind: extend ? 'ObjectTypeExtension' : node.kind,
+          };
+        }
+      },
+      leave() {
+        currentObjectName = undefined;
+      },
+    },
+    InterfaceTypeDefinition: {
+      enter(
+        node: InterfaceTypeDefinitionNode,
+      ): InterfaceTypeDefinitionNode | InterfaceTypeExtensionNode | undefined {
+        currentObjectName = node.name.value;
+        if (objectTypesTodo.has(currentObjectName)) {
+          objectTypesTodo.delete(currentObjectName);
+
+          const { keyFields, extend } = federationConfig[currentObjectName];
+
+          const newDirectives = keyFields
+            ? keyFields.map(keyField =>
+                createDirectiveWithFields('key', keyField),
+              )
+            : [];
+
+          return {
+            ...node,
+            directives: [...(node.directives || []), ...newDirectives],
+            kind: extend ? 'InterfaceTypeExtension' : node.kind,
           };
         }
       },
