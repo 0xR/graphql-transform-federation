@@ -1,6 +1,6 @@
 {
   "name": "@resideo/graphql-transform-federation",
-  "version": "2.0.3",
+  "version": "2.0.4",
   "publishConfig": {
     "registry": "https://npm.pkg.github.com/",
     "access": "restricted"

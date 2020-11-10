@@ -14,6 +14,7 @@ import {
   FederationFieldConfig,
   FederationFieldsConfig,
   FederationObjectConfig,
+  FederationInterfaceConfig,
 } from './transform-federation';
 
 function createDirectiveWithFields(directiveName: string, fields: string) {
@@ -40,10 +41,10 @@ function filterFieldsConfigToDo(
   );
 }
 
-function isObjectConfigToDo<TContext>({
+function isNodeConfigToDo<TContext>({
   extend,
   keyFields,
-}: FederationObjectConfig<TContext>): boolean {
+}: FederationObjectConfig<TContext> | FederationInterfaceConfig): boolean {
   return Boolean((keyFields && keyFields.length) || extend);
 }
 
@@ -53,9 +54,9 @@ export function addFederationAnnotations<TContext>(
 ): string {
   const ast = parse(schema);
 
-  const objectTypesTodo = new Set(
+  const nodeTypeToDo = new Set(
     Object.entries(federationConfig)
-      .filter(([, config]) => isObjectConfigToDo<TContext>(config))
+      .filter(([, config]) => isNodeConfigToDo<TContext>(config))
       .map(([objectName]) => objectName),
   );
 
@@ -69,18 +70,18 @@ export function addFederationAnnotations<TContext>(
       .filter(([, fieldsConfig]) => Object.keys(fieldsConfig).length),
   );
 
-  let currentObjectName: string | undefined = undefined;
+  let currentNodeName: string | undefined = undefined;
 
   const withDirectives = visit(ast, {
     ObjectTypeDefinition: {
       enter(
         node: ObjectTypeDefinitionNode,
       ): ObjectTypeDefinitionNode | ObjectTypeExtensionNode | undefined {
-        currentObjectName = node.name.value;
-        if (objectTypesTodo.has(currentObjectName)) {
-          objectTypesTodo.delete(currentObjectName);
+        currentNodeName = node.name.value;
+        if (nodeTypeToDo.has(currentNodeName)) {
+          nodeTypeToDo.delete(currentNodeName);
 
-          const { keyFields, extend } = federationConfig[currentObjectName];
+          const { keyFields, extend } = federationConfig[currentNodeName];
 
           const newDirectives = keyFields
             ? keyFields.map(keyField =>
@@ -98,18 +99,20 @@ export function addFederationAnnotations<TContext>(
         return undefined;
       },
       leave() {
-        currentObjectName = undefined;
+        currentNodeName = undefined;
       },
     },
     InterfaceTypeDefinition: {
       enter(
         node: InterfaceTypeDefinitionNode,
       ): InterfaceTypeDefinitionNode | InterfaceTypeExtensionNode | undefined {
-        currentObjectName = node.name.value;
-        if (objectTypesTodo.has(currentObjectName)) {
-          objectTypesTodo.delete(currentObjectName);
+        currentNodeName = node.name.value;
 
-          const { keyFields, extend } = federationConfig[currentObjectName];
+        if (nodeTypeToDo.has(currentNodeName)) {
+          nodeTypeToDo.delete(currentNodeName);
+
+          const { keyFields, extend } = federationConfig[currentNodeName];
+          console.log(keyFields, extend);
 
           const newDirectives = keyFields
             ? keyFields.map(keyField =>
@@ -127,21 +130,21 @@ export function addFederationAnnotations<TContext>(
         return undefined;
       },
       leave() {
-        currentObjectName = undefined;
+        currentNodeName = undefined;
       },
     },
     FieldDefinition(node): FieldDefinitionNode | undefined {
       const currentFieldsTodo =
-        currentObjectName && fieldTypesTodo[currentObjectName];
+        currentNodeName && fieldTypesTodo[currentNodeName];
       if (
-        currentObjectName &&
+        currentNodeName &&
         currentFieldsTodo &&
         currentFieldsTodo[node.name.value]
       ) {
         const currentFieldConfig = currentFieldsTodo[node.name.value];
         delete currentFieldsTodo[node.name.value];
         if (Object.keys(currentFieldsTodo).length === 0) {
-          delete fieldTypesTodo[currentObjectName];
+          delete fieldTypesTodo[currentNodeName];
         }
 
         return {
@@ -174,10 +177,10 @@ export function addFederationAnnotations<TContext>(
     },
   });
 
-  if (objectTypesTodo.size !== 0) {
+  if (nodeTypeToDo.size !== 0) {
     throw new Error(
       `Could not add key directives or extend types: ${Array.from(
-        objectTypesTodo,
+        nodeTypeToDo,
       ).join(', ')}`,
     );
   }

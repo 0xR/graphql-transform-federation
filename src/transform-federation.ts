@@ -33,6 +33,11 @@ export interface FederationObjectConfig<TContext> {
   fields?: FederationFieldsConfig;
 }
 
+export interface FederationInterfaceConfig {
+  keyFields?: string[];
+  extend?: boolean;
+}
+
 export interface FederationConfig<TContext> {
   [objectName: string]: FederationObjectConfig<TContext>;
 }
