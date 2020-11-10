@@ -112,7 +112,6 @@ export function addFederationAnnotations<TContext>(
           nodeTypeToDo.delete(currentNodeName);
 
           const { keyFields, extend } = federationConfig[currentNodeName];
-          console.log(keyFields, extend);
 
           const newDirectives = keyFields
             ? keyFields.map(keyField =>
