@@ -19,6 +19,7 @@ export interface FederationFieldConfig {
   external?: boolean;
   provides?: string;
   requires?: string;
+  hidden?: boolean;
 }
 
 export interface FederationFieldsConfig {
@@ -30,6 +31,7 @@ export interface FederationObjectConfig<TContext> {
   extend?: boolean;
   resolveReference?: GraphQLReferenceResolver<TContext>;
   fields?: FederationFieldsConfig;
+  hidden?: boolean;
 }
 
 export interface FederationConfig<TContext> {

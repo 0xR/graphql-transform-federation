@@ -97,6 +97,7 @@ interface FederationFieldConfig {
   external?: boolean;
   provides?: string;
   requires?: string;
+  hidden?: boolean;
 }
 
 interface FederationFieldsConfig {
@@ -109,6 +110,7 @@ interface FederationObjectConfig<TContext> {
   extend?: boolean;
   resolveReference?: GraphQLReferenceResolver<TContext>;
   fields?: FederationFieldsConfig;
+  hidden?: boolean;
 }
 
 interface FederationConfig<TContext> {
@@ -137,3 +139,25 @@ Runs the example in watch mode for development.
 ## `npm run test`
 
 Run the tests
+
+# Hiding unwanted fields and types
+
+In case you have no control over remote schema and there are fields with same name you gonna need to hide them from gateway
+
+You can hide both fields and types like so:
+
+```typescript
+const federationSchema = transformSchemaFederation(schemaWithoutFederation, {
+  Query: {
+    extend: true,
+    fields: {
+      someUnwantedField: {
+        hidden: true // will be not visible for gateway
+      }
+    }
+  },
+  SomeUnwantedType: {
+    hidden: true // will be not visible for gateway
+  },
+});
+```

@@ -1,4 +1,4 @@
-import { makeExecutableSchema, transformSchema } from 'graphql-tools';
+import { makeExecutableSchema } from 'graphql-tools';
 import { transformSchemaFederation } from './transform-federation';
 import { execute } from 'graphql/execution/execute';
 import { DirectiveNode, parse, print, visit } from 'graphql/language';
@@ -83,7 +83,7 @@ describe('Transform Federation', () => {
                 name
               }
             }
-          } 
+          }
         `),
       }),
     ).toEqual({
