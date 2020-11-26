@@ -27,7 +27,7 @@ const schemaWithoutFederation = makeExecutableSchema({
   resolvers: {
     Query: {
       productById(source, { id }: ProductKey) {
-        return products.find(product => product.id === id);
+        return products.find((product) => product.id === id);
       },
     },
   },
