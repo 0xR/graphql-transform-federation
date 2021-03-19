@@ -1,5 +1,5 @@
 import {
-  FieldDefinitionNode,
+  FieldDefinitionNode, InterfaceTypeDefinitionNode,
   ObjectTypeDefinitionNode,
   ObjectTypeExtensionNode,
   parse,
@@ -13,6 +13,7 @@ import {
   FederationFieldsConfig,
   FederationObjectConfig,
 } from './transform-federation';
+import { InterfaceTypeExtensionNode } from 'graphql';
 
 function createDirectiveWithFields(directiveName: string, fields: string) {
   return createDirectiveNode(directiveName, {
@@ -86,10 +87,45 @@ export function addFederationAnnotations<TContext>(
               )
             : [];
 
+          if (extend) {
+            newDirectives.push(createDirectiveNode('extends'))
+          }
+
           return {
             ...node,
             directives: [...(node.directives || []), ...newDirectives],
-            kind: extend ? 'ObjectTypeExtension' : node.kind,
+            kind: (extend ? 'ObjectTypeExtension' : node.kind)
+          };
+        }
+      },
+      leave() {
+        currentObjectName = undefined;
+      },
+    },
+    InterfaceTypeDefinition: {
+      enter(
+          node: InterfaceTypeDefinitionNode,
+      ): InterfaceTypeDefinitionNode | InterfaceTypeExtensionNode | undefined {
+        currentObjectName = node.name.value;
+        if (objectTypesTodo.has(currentObjectName)) {
+          objectTypesTodo.delete(currentObjectName);
+
+          const { keyFields, extend } = federationConfig[currentObjectName];
+
+          const newDirectives = keyFields
+              ? keyFields.map((keyField) =>
+                  createDirectiveWithFields('key', keyField),
+              )
+              : [];
+
+          if (extend) {
+            newDirectives.push(createDirectiveNode('extends'))
+          }
+
+          return {
+            ...node,
+            directives: [...(node.directives || []), ...newDirectives],
+            kind: (extend ? 'InterfaceTypeExtension' : node.kind)
           };
         }
       },
