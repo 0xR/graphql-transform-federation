@@ -1,6 +1,8 @@
 name: Preview
 
 on: pull_request
+env:
+  GITHUB_TOKEN: ${{ secrets.RESIDEO_BOT_TOKEN }}
 
 jobs:
   publish-previews:
