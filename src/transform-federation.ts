@@ -79,7 +79,7 @@ export function transformSchemaFederation<TContext>(
 
   const schemaWithFederationQueryType = transformSchema(
     schemaWithQueryType,
-    type => {
+    (type) => {
       // Add `_entities` and `_service` fields to query root type
       if (isObjectType(type) && type === schemaWithQueryType.getQueryType()) {
         const config = type.toConfig();
@@ -101,7 +101,7 @@ export function transformSchemaFederation<TContext>(
 
   const schemaWithUnionType = transformSchema(
     schemaWithFederationQueryType,
-    type => {
+    (type) => {
       if (isUnionType(type) && type.name === EntityType.name) {
         return new GraphQLUnionType({
           ...EntityType.toConfig(),

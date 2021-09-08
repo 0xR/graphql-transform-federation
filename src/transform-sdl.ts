@@ -84,7 +84,7 @@ export function addFederationAnnotations<TContext>(
           const { keyFields, extend } = federationConfig[currentNodeName];
 
           const newDirectives = keyFields
-            ? keyFields.map(keyField =>
+            ? keyFields.map((keyField) =>
                 createDirectiveWithFields('key', keyField),
               )
             : [];
@@ -114,7 +114,7 @@ export function addFederationAnnotations<TContext>(
           const { keyFields, extend } = federationConfig[currentNodeName];
 
           const newDirectives = keyFields
-            ? keyFields.map(keyField =>
+            ? keyFields.map((keyField) =>
                 createDirectiveWithFields('key', keyField),
               )
             : [];
@@ -189,7 +189,7 @@ export function addFederationAnnotations<TContext>(
       `Could not add directive to these fields: ${Object.entries(fieldTypesTodo)
         .flatMap(([objectName, fieldsConfig]) => {
           return Object.keys(fieldsConfig).map(
-            externalField => `${objectName}.${externalField}`,
+            (externalField) => `${objectName}.${externalField}`,
           );
         })
         .join(', ')}`,

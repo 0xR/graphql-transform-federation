@@ -83,7 +83,7 @@ describe('Transform Federation', () => {
                 name
               }
             }
-          } 
+          }
         `),
       }),
     ).toEqual({
