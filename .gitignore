@@ -90,3 +90,7 @@ typings/
 .dynamodb/
 
 dist/
+
+# Intellij IDEA Configuration
+.idea
+*.iml

@@ -58,6 +58,10 @@ export function transformSchemaFederation<TContext>(
   const entityTypes = Object.fromEntries(
     Object.entries(federationConfig)
       .filter(([, { keyFields }]) => keyFields && keyFields.length)
+      .filter(([objectName]) => {
+          const type = schemaWithQueryType.getType(objectName);
+          return !isInterfaceType(type);
+      })
       .map(([objectName]) => {
         const type = schemaWithQueryType.getType(objectName);
         if (!isObjectType(type)) {
